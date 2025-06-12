@@ -17,6 +17,9 @@ os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 import torch.autograd as autograd
 autograd.set_detect_anomaly(True)
 
+# Directory containing the BCICIV_2b dataset
+dataset_root = "/home/xulei/PycharmProjects/EEG-DG/BCICIV_2b_mat"
+
 
 class argparse():
     pass
@@ -26,8 +29,8 @@ args = argparse()
 args.learning_rate = 0.0005
 args.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 args.batch_size = 8
-args.classes = 4
-args.channels = 22
+args.classes = 2
+args.channels = 3
 args.seed = 24
 args.epochs = 500
 args.momentum = 0.9
@@ -77,7 +80,8 @@ class MyDataset_test(Dataset):
 
 
 def load_trainmat(i):
-    path = "H:\Database\EEG\Motor Imagery\BCI Competition\BCI_IV\Data_Sets_2a\BCI_IV_2a_Subj{}_session1_2-6s.mat".format(i)
+    file_name = "B{:02d}T.mat".format(i)
+    path = os.path.join(dataset_root, file_name)
     data = scio.loadmat(path)
 
     Feature = data["Feature"].transpose(2, 1, 0)
@@ -102,7 +106,8 @@ def load_trainmat(i):
 
 
 def load_testmat(j):
-    path = "H:\Database\EEG\Motor Imagery\BCI Competition\BCI_IV\Data_Sets_2a\BCI_IV_2a_Subj{}_session2_2-6s.mat".format(j)
+    file_name = "B{:02d}E.mat".format(j)
+    path = os.path.join(dataset_root, file_name)
     data = scio.loadmat(path)
     Feature = data["Feature"].transpose(2, 1, 0)
     Label = data["Label"][:, 0]
